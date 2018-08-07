@@ -41,7 +41,14 @@ def extract_names(filename):
   ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
   """
   # +++your code here+++
-  return
+  file = open(filename).read()
+  year = re.findall(r'Popularity\sin\s(\d\d\d\d)', file)
+  ranks = re.findall(r'<td>(\d+)</td><td>(\w+)</td><td>(\w+)</td>', file)
+  names = [year[0]]
+  for rank in ranks:
+    names.append(rank[1] + ' ' + rank[0])
+    names.append(rank[2] + ' ' + rank[0])
+  return '\n'.join(sorted(names)) + '\n'
 
 
 def main():
@@ -51,18 +58,24 @@ def main():
   args = sys.argv[1:]
 
   if not args:
-    print 'usage: [--summaryfile] file [file ...]'
+    print('usage: [--summaryfile] file [file ...]')
     sys.exit(1)
 
   # Notice the summary flag and remove it from args if it is present.
-  summary = False
   if args[0] == '--summaryfile':
-    summary = True
     del args[0]
-
-  # +++your code here+++
-  # For each filename, get the names, then either print the text output
-  # or write it to a summary file
+    for file in args:
+      summaryfile = open(file + '.summary', "w+")
+      summaryfile.write(extract_names(file))
+      print('wrote file ' + file + '.summary')
+      summaryfile.close()
+  else:
+    # +++your code here+++
+    # For each filename, get the names, then either print the text output
+    # or write it to a summary file
+    for file in args:
+      print('--- parsing ' + file + ' ---')
+      print(extract_names(file))
   
 if __name__ == '__main__':
   main()
